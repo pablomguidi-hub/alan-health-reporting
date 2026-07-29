@@ -25,27 +25,33 @@ mascot_b64 = get_base64_image("mascot_alan.png")
 # --- ESTILOS CSS PERSONALIZADOS ---
 st.markdown("""
 <style>
+    /* --- FORZAR COLOR PRIMARIO DE STREAMLIT A AZUL/PÚRPURA ALAN (#5956E9) --- */
+    :root, .stApp {
+        --primary-color: #5956E9 !important;
+    }
+
     .stApp {
         background-color: #FFFFFF;
         color: #111827;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* --- CAMBIO DE COLOR DE SLIDERS AL AZUL/PÚRPURA ALAN (#5956E9) --- */
-    /* Tirador / Botón circular del slider */
-    div[data-testid="stSlider"] [role="slider"] {
+    /* SOBRESCRITURA EXHAUSTIVA DE SLIDERS (BASEWEB & STREAMLIT COMPONENTS) */
+    div[data-testid="stSlider"] {
+        --primary-color: #5956E9 !important;
+    }
+    
+    div[data-baseweb="slider"] [role="slider"] {
         background-color: #5956E9 !important;
         border-color: #5956E9 !important;
         box-shadow: 0 0 0 3px rgba(89, 86, 233, 0.2) !important;
     }
-    /* Barra del track activo (seleccionado) */
-    div[data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
+
+    div[data-baseweb="slider"] div[style*="background-color"] {
         background-color: #5956E9 !important;
     }
-    div[data-testid="stSlider"] div[data-baseweb="slider"] div[style*="background-color"] {
-        background-color: #5956E9 !important;
-    }
-    /* Color de los textos numéricos e indicadores del slider */
+
+    /* Forzar texto de los valores del slider */
     div[data-testid="stSlider"] div[data-testid="stStyledText"],
     div[data-testid="stSlider"] p,
     div[data-testid="stSlider"] span {
