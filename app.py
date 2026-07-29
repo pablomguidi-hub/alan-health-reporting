@@ -60,7 +60,7 @@ st.markdown("""
     .brand-avatar {
         width: 42px;
         height: 42px;
-        background-color: #4F46E5;
+        background-color: #5956E9;
         color: white;
         font-weight: 800;
         font-size: 1.1rem;
@@ -68,7 +68,7 @@ st.markdown("""
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 2px 6px rgba(89, 86, 233, 0.3);
     }
 
     .brand-info-text {
@@ -77,7 +77,7 @@ st.markdown("""
     }
 
     .brand-title {
-        font-size: 0.70rem;
+        font-size: 0.68rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: #4F46E5;
@@ -88,7 +88,7 @@ st.markdown("""
         font-size: 1.10rem;
         font-weight: 800;
         color: #1E1B4B;
-        margin-top: -2px;
+        margin-top: -1px;
     }
 
     .sub-description {
@@ -114,7 +114,7 @@ st.markdown("""
         font-weight: 600;
     }
     div[data-testid="stMetricValue"] {
-        color: #6366F1 !important;
+        color: #5956E9 !important;
         font-size: 1.95em !important;
         font-weight: 800 !important;
     }
@@ -139,7 +139,7 @@ st.markdown("""
     .sidebar-avatar {
         width: 44px;
         height: 44px;
-        background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+        background: linear-gradient(135deg, #5956E9 0%, #8B5CF6 100%);
         color: white;
         font-size: 1.2rem;
         font-weight: 800;
@@ -158,7 +158,7 @@ st.markdown("""
 
     .sidebar-brand-role {
         font-size: 0.82rem;
-        color: #6366F1;
+        color: #5956E9;
         font-weight: 600;
     }
 
@@ -218,24 +218,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER SUPERIOR CON LOGO OFICIAL SVG (NATIVO) Y MARCA PERSONAL ---
+# --- HEADER SUPERIOR CON NUEVO LOGO OFICIAL DE ALAN (IMAGEN 2) Y MARCA PERSONAL ---
 st.markdown("""
 <div class="header-container">
     <div class="logo-title-box">
-        <!-- Logo Alan Oficial SVG -->
-        <svg height="46" viewBox="0 0 150 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 6C12 6 6 12 6 20C6 28 12 34 20 34C28 34 34 28 34 20C34 12 28 6 20 6Z" fill="#6366F1"/>
-            <circle cx="8" cy="11" r="5.5" fill="#6366F1"/>
-            <circle cx="8" cy="11" r="2.5" fill="#EEF2FF"/>
-            <circle cx="32" cy="11" r="5.5" fill="#6366F1"/>
-            <circle cx="32" cy="11" r="2.5" fill="#EEF2FF"/>
-            <ellipse cx="15.5" cy="18" rx="1.8" ry="2.8" fill="#FFFFFF"/>
-            <ellipse cx="24.5" cy="18" rx="1.8" ry="2.8" fill="#FFFFFF"/>
-            <circle cx="15.5" cy="19" r="0.9" fill="#1E1B4B"/>
-            <circle cx="24.5" cy="19" r="0.9" fill="#1E1B4B"/>
-            <path d="M18.5 22.5C18.5 21 21.5 21 21.5 22.5C21.5 24.8 18.5 24.8 18.5 22.5Z" fill="#1E1B4B"/>
-            <path d="M17.5 27.5C19.2 29.2 20.8 29.2 22.5 27.5" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round"/>
-            <text x="44" y="31" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="29" fill="#1E1B4B" letter-spacing="-1">alan</text>
+        <!-- Nuevo Logo Oficial de Alan (Koala Minimalista Morado + Tipografía) -->
+        <svg height="42" viewBox="0 0 160 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Oreja Izquierda -->
+            <rect x="2" y="11" width="12" height="9" rx="4.5" fill="#5956E9"/>
+            <!-- Oreja Derecha -->
+            <rect x="37" y="11" width="12" height="9" rx="4.5" fill="#5956E9"/>
+            <!-- Cabeza Principal / Nariz -->
+            <rect x="11" y="13" width="29" height="17" rx="8.5" fill="#5956E9"/>
+            <!-- Sonrisa / Barbilla -->
+            <rect x="15" y="29" width="21" height="8" rx="4" fill="#5956E9"/>
+            <!-- Tipografía alan -->
+            <text x="55" y="34" font-family="'Comfortaa', 'Fredoka', 'Quicksand', -apple-system, sans-serif" font-weight="700" font-size="34" fill="#5956E9" letter-spacing="-1px">alan</text>
         </svg>
         <h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
     </div>
@@ -267,7 +265,7 @@ with st.sidebar:
         <div style="font-size:0.83rem; color:#4B5563; line-height:1.4;">
             Especialista en Tarificación Salud, Reservas IBNR/RBNS y Modelización P&L.
         </div>
-        <div class="brand-status-pill">🟢 Creado por Pablo Guidi</div>
+        <div class="brand-status-pill">🟢 Pablo Guidi</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -351,7 +349,7 @@ with col_left:
     ]
     df_pnl = pd.DataFrame({"Concepto": conceptos, "Monto (€)": valores})
     
-    colors_pnl = ['#6366F1', '#EF4444', '#F87171', '#FCA5A5', '#F87171', '#10B981' if resultado_tecnico_neto >= 0 else '#EF4444']
+    colors_pnl = ['#5956E9', '#EF4444', '#F87171', '#FCA5A5', '#F87171', '#10B981' if resultado_tecnico_neto >= 0 else '#EF4444']
     
     fig_pnl = px.bar(
         df_pnl, 
@@ -377,7 +375,7 @@ with col_right:
     cr_range = [lr + expense_ratio for lr in lr_range]
     
     df_cr = pd.DataFrame({"Adopción Salud Digital (%)": adop_range * 100, "Combined Ratio (%)": np.array(cr_range) * 100})
-    fig_cr = px.line(df_cr, x="Adopción Salud Digital (%)", y="Combined Ratio (%)", markers=True, color_discrete_sequence=["#6366F1"])
+    fig_cr = px.line(df_cr, x="Adopción Salud Digital (%)", y="Combined Ratio (%)", markers=True, color_discrete_sequence=["#5956E9"])
     
     fig_cr.add_hline(y=100, line_dash="dash", line_color="#EF4444", annotation_text="Breakeven (100%)")
     fig_cr.add_hline(y=90, line_dash="dash", line_color="#10B981", annotation_text="Target Alan (90%)")
