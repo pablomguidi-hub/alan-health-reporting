@@ -5,59 +5,113 @@ import plotly.express as px
 
 # --- CONFIGURACIÓN DE PÁGINA (Estilo Alan) ---
 st.set_page_config(
-    page_title="Alan Health Spain - Monthly Actuarial & Business Reporting",
+    page_title="Alan Health Spain - Reporting Actuarial & Business",
     page_icon="💜",
     layout="wide"
 )
 
-# --- ESTILOS CSS PERSONALIZADOS (Alineado con Brand & UI de Alan) ---
+# --- BASE64 LOGO ALAN ORIGINAL (Koala + Tipografía Oficial) ---
+ALAN_LOGO_B64 = "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"
+
+# --- ESTILOS CSS PERSONALIZADOS (Brand Alan & Marca Personal Pablo Guidi) ---
 st.markdown("""
 <style>
-    /* Fondo principal y tipografía general */
     .stApp {
         background-color: #FFFFFF;
         color: #111827;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    
-    /* Header & Branding Alan */
-    .alan-brand-header {
+
+    /* Header Container */
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #E2E8F0;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .logo-title-box {
         display: flex;
         align-items: center;
-        gap: 16px;
-        margin-bottom: 8px;
+        gap: 20px;
     }
-    .alan-logo-badge {
-        background-color: #6366F1;
-        color: white;
-        font-weight: 800;
-        font-size: 24px;
-        padding: 8px 18px;
-        border-radius: 20px;
-        letter-spacing: -0.5px;
-        display: inline-block;
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+
+    .alan-logo-img {
+        height: 52px;
+        width: auto;
     }
-    .main-title {
+
+    .main-title-text {
         color: #111827;
-        font-size: 2.2rem;
+        font-size: 1.85rem;
         font-weight: 800;
         margin: 0;
         line-height: 1.2;
     }
+
+    /* BANNER DESTACADO MARCA PERSONAL (Pablo Guidi) */
+    .personal-brand-header-badge {
+        background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+        border: 1.5px solid #6366F1;
+        border-radius: 12px;
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
+    }
+
+    .brand-avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #4F46E5;
+        color: white;
+        font-weight: 800;
+        font-size: 1.1rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+    }
+
+    .brand-info-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brand-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #4F46E5;
+        font-weight: 700;
+    }
+
+    .brand-name {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #1E1B4B;
+    }
+
     .sub-description {
         color: #6B7280;
         font-size: 1.05rem;
-        margin-top: 8px;
-        margin-bottom: 24px;
+        margin-top: -10px;
+        margin-bottom: 25px;
+        line-height: 1.5;
     }
 
-    /* Estilo para las Tarjetas de Métricas (KPIs) */
+    /* Tarjetas de Métricas (KPIs) */
     div[data-testid="stMetricValue"] {
         background-color: #F8FAFC;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
-        padding: 16px;
+        padding: 18px 12px;
         text-align: center;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     }
@@ -67,34 +121,124 @@ st.markdown("""
         font-weight: 600;
     }
     div[data-testid="stMetricValue"] {
-        color: #6366F1 !important; /* Violeta Alan */
-        font-size: 1.9em !important;
-        font-weight: 700 !important;
+        color: #6366F1 !important;
+        font-size: 1.95em !important;
+        font-weight: 800 !important;
     }
 
-    /* Sidebar - Estilo Alan */
+    /* MARCA PERSONAL EN SIDEBAR */
+    .sidebar-brand-card {
+        background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
+        border: 1px solid #DDD6FE;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.08);
+    }
+
+    .sidebar-brand-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-avatar {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 800;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-brand-name {
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: #1E1B4B;
+        line-height: 1.2;
+    }
+
+    .sidebar-brand-role {
+        font-size: 0.82rem;
+        color: #6366F1;
+        font-weight: 600;
+    }
+
+    .brand-status-pill {
+        display: inline-block;
+        background-color: #DEF7EC;
+        color: #03543F;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-top: 8px;
+    }
+
     [data-testid="stSidebar"] {
         background-color: #F8FAFC;
         border-right: 1px solid #E2E8F0;
     }
-    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-        color: #6366F1 !important;
+
+    /* FOOTER MARCA PERSONAL */
+    .footer-brand-box {
+        background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+        color: #FFFFFF;
+        border-radius: 14px;
+        padding: 22px 28px;
+        margin-top: 35px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        box-shadow: 0 8px 20px rgba(30, 27, 75, 0.15);
     }
 
-    /* Separadores */
-    hr {
-        border: 0;
-        border-top: 1px solid #E2E8F0;
-        margin: 24px 0;
+    .footer-brand-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #FFFFFF;
+        margin-bottom: 4px;
+    }
+
+    .footer-brand-sub {
+        font-size: 0.88rem;
+        color: #C7D2FE;
+    }
+
+    .footer-badge {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #FFFFFF;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER / MARCA PERSONAL ---
-st.markdown("""
-<div class="alan-brand-header">
-    <span class="alan-logo-badge">alan</span>
-    <h1 class="main-title">Alan Health Spain: Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
+# --- HEADER SUPERIOR CON LOGO OFICIAL DE ALAN Y MARCA PERSONAL ---
+st.markdown(f"""
+<div class="header-container">
+    <div class="logo-title-box">
+        <img src="data:image/png;base64,{ALAN_LOGO_B64}" class="alan-logo-img" alt="Alan Logo Official">
+        <h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
+    </div>
+    <div class="personal-brand-header-badge">
+        <div class="brand-avatar">PG</div>
+        <div class="brand-info-text">
+            <span class="brand-title">Dashboard desarrollado por</span>
+            <span class="brand-name">Creado por Pablo Guidi</span>
+        </div>
+    </div>
 </div>
 <p class="sub-description">
 Framework de reporting interno mensual diseñado bajo los principios de <b>transparencia radical</b> de Alan. 
@@ -102,59 +246,70 @@ Permite monitorizar la cuenta de resultados técnica, los <i>Key Actuarial Drive
 </p>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR: CONTEXTO Y OFERTAS OFICIALES DE ALAN ---
-st.sidebar.header("🏢 Segmento de Cliente y Oferta")
-segmento = st.sidebar.radio("Tipo de Cliente", ["Empresas (B2B)", "Individuales / TNS (B2C)"])
+# --- SIDEBAR: MARCA PERSONAL + CONTEXTO Y OFERTAS OFICIALES DE ALAN ---
+with st.sidebar:
+    st.markdown("""
+    <div class="sidebar-brand-card">
+        <div class="sidebar-brand-header">
+            <div class="sidebar-avatar">PG</div>
+            <div>
+                <div class="sidebar-brand-name">Pablo Guidi</div>
+                <div class="sidebar-brand-role">Consultoría & Analytics Actuarial</div>
+            </div>
+        </div>
+        <div style="font-size:0.83rem; color:#4B5563; line-height:1.4;">
+            Especialista en Tarificación Salud, Reservas IBNR/RBNS y Modelización P&L.
+        </div>
+        <div class="brand-status-pill">🟢 Creado por Pablo Guidi</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-if segmento == "Empresas (B2B)":
-    plan = st.sidebar.selectbox("Oferta B2B (Elegible Colectivos)", ["Essentiel", "Balanced", "Optimal"])
-    num_miembros = st.sidebar.slider("Número de Asegurados en Colectivo", min_value=50, max_value=10000, value=1000, step=50)
-    edad_media = st.sidebar.slider("Edad Media de la Plantilla (Ajuste Demográfico)", min_value=20, max_value=65, value=36)
-    
-    # Primas base estimadas B2B
-    prima_base = {"Essentiel": 38.0, "Balanced": 52.0, "Optimal": 75.0}[plan]
-    # Factor demográfico actuarial B2B (+1.5% por año sobre 30 años base)
-    factor_demog = 1.0 + max(0, (edad_media - 30) * 0.015)
-    prima_mes = prima_base * factor_demog
-else:
-    plan = st.sidebar.selectbox("Oferta B2C (Trabajadores No Salariados / TNS)", ["Alan Rubis", "Alan Emeraude", "Alan Saphir"])
-    num_miembros = st.sidebar.slider("Número de Asegurados Individuales", min_value=50, max_value=3000, value=500, step=25)
-    prima_mes = {"Alan Rubis": 42.0, "Alan Emeraude": 65.0, "Alan Saphir": 95.0}[plan]
-    factor_demog = 1.0
+    st.header("🏢 Segmento de Cliente y Oferta")
+    segmento = st.radio("Tipo de Cliente", ["Empresas (B2B)", "Individuales / TNS (B2C)"])
 
-st.sidebar.header("📊 Drivers de Siniestralidad y Reservas")
-frecuencia_reclamos = st.sidebar.slider("Frecuencia (Reclamos / Miembro / Mes)", min_value=0.2, max_value=2.0, value=0.65, step=0.05)
-costo_medio_reclamo = st.sidebar.number_input("Costo Medio por Reclamo (€)", min_value=20.0, max_value=300.0, value=58.0, step=2.0)
+    if segmento == "Empresas (B2B)":
+        plan = st.selectbox("Oferta B2B (Elegible Colectivos)", ["Essentiel", "Balanced", "Optimal"])
+        num_miembros = st.slider("Número de Asegurados en Colectivo", min_value=50, max_value=10000, value=1000, step=50)
+        edad_media = st.slider("Edad Media de la Plantilla (Ajuste Demográfico)", min_value=20, max_value=65, value=36)
+        
+        prima_base = {"Essentiel": 38.0, "Balanced": 52.0, "Optimal": 75.0}[plan]
+        factor_demog = 1.0 + max(0, (edad_media - 30) * 0.015)
+        prima_mes = prima_base * factor_demog
+    else:
+        plan = st.selectbox("Oferta B2C (Trabajadores No Salariados / TNS)", ["Alan Rubis", "Alan Emeraude", "Alan Saphir"])
+        num_miembros = st.slider("Número de Asegurados Individuales", min_value=50, max_value=3000, value=500, step=25)
+        prima_mes = {"Alan Rubis": 42.0, "Alan Emeraude": 65.0, "Alan Saphir": 95.0}[plan]
+        factor_demog = 1.0
 
-# Reservas Actuariales
-rbns_pct = st.sidebar.slider("Reserva RBNS (% Siniestros Pendientes Notificados)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100.0
-ibnr_pct = st.sidebar.slider("Reserva IBNR (% Siniestros Incurridos No Reportados)", min_value=1.0, max_value=10.0, value=4.5, step=0.5) / 100.0
-adopcion_prevencion = st.sidebar.slider("Adopción Salud Digital / Prevención (%)", min_value=10, max_value=100, value=55, step=5) / 100.0
+    st.header("📊 Drivers de Siniestralidad y Reservas")
+    frecuencia_reclamos = st.slider("Frecuencia (Reclamos / Miembro / Mes)", min_value=0.2, max_value=2.0, value=0.65, step=0.05)
+    costo_medio_reclamo = st.number_input("Costo Medio por Reclamo (€)", min_value=20.0, max_value=300.0, value=58.0, step=2.0)
 
-st.sidebar.header("💸 Cargas de Gastos y Operación (% Prima)")
-comisiones_pct = st.sidebar.slider("Comisiones / Adquisición (CAC) (%)", min_value=0.0, max_value=15.0, value=4.5, step=0.5) / 100.0
-operaciones_admin_pct = st.sidebar.slider("Gastos Admin & Operaciones Ops (%)", min_value=5.0, max_value=20.0, value=9.5, step=0.5) / 100.0
-reaseguro_pct = st.sidebar.slider("Costo de Reaseguro / Capital (%)", min_value=0.5, max_value=5.0, value=1.5, step=0.1) / 100.0
+    rbns_pct = st.slider("Reserva RBNS (% Siniestros Pendientes Notificados)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100.0
+    ibnr_pct = st.slider("Reserva IBNR (% Siniestros Incurridos No Reportados)", min_value=1.0, max_value=10.0, value=4.5, step=0.5) / 100.0
+    adopcion_prevencion = st.slider("Adopción Salud Digital / Prevención (%)", min_value=10, max_value=100, value=55, step=5) / 100.0
+
+    st.header("💸 Cargas de Gastos y Operación (% Prima)")
+    comisiones_pct = st.slider("Comisiones / Adquisición (CAC) (%)", min_value=0.0, max_value=15.0, value=4.5, step=0.5) / 100.0
+    operaciones_admin_pct = st.slider("Gastos Admin & Operaciones Ops (%)", min_value=5.0, max_value=20.0, value=9.5, step=0.5) / 100.0
+    reaseguro_pct = st.slider("Costo de Reaseguro / Capital (%)", min_value=0.5, max_value=5.0, value=1.5, step=0.1) / 100.0
 
 # --- CÁLCULOS ACTUARIALES ---
 ingresos_primas_mes = num_miembros * prima_mes
 
-# Siniestralidad
 siniestros_pagados_base = num_miembros * frecuencia_reclamos * costo_medio_reclamo
-reduccion_prevencion = adopcion_prevencion * 0.07 # Reducción por prevención activa
+reduccion_prevencion = adopcion_prevencion * 0.07 
 siniestros_pagados = siniestros_pagados_base * (1.0 - reduccion_prevencion)
 
 rbns_monto = siniestros_pagados * rbns_pct
 ibnr_monto = (siniestros_pagados + rbns_monto) * ibnr_pct
 siniestros_totales_incurridos = siniestros_pagados + rbns_monto + ibnr_monto
 
-# Gastos Operativos y Adquisición
 comisiones_monto = ingresos_primas_mes * comisiones_pct
 gastos_admin_monto = ingresos_primas_mes * operaciones_admin_pct
 reaseguro_monto = ingresos_primas_mes * reaseguro_pct
 gastos_totales_monto = comisiones_monto + gastos_admin_monto + reaseguro_monto
 
-# Márgenes y Ratios Actuariales
 margen_tecnico_bruto = ingresos_primas_mes - siniestros_totales_incurridos
 resultado_tecnico_neto = margen_tecnico_bruto - gastos_totales_monto
 
@@ -164,7 +319,6 @@ combined_ratio = loss_ratio + expense_ratio
 auto_claims_rate = min(0.96, 0.82 + (adopcion_prevencion * 0.12))
 
 # --- TARJETAS DE MÉTRICAS CLAVE (KPIs) ---
-st.divider()
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric("Primas Devengadas Mes", f"{ingresos_primas_mes:,.0f} €")
@@ -190,7 +344,6 @@ with col_left:
     ]
     df_pnl = pd.DataFrame({"Concepto": conceptos, "Monto (€)": valores})
     
-    # Paleta con identidad visual Alan
     colors_pnl = ['#6366F1', '#EF4444', '#F87171', '#FCA5A5', '#F87171', '#10B981' if resultado_tecnico_neto >= 0 else '#EF4444']
     
     fig_pnl = px.bar(
@@ -242,4 +395,15 @@ ratios_df = pd.DataFrame({
 
 st.dataframe(ratios_df, use_container_width=True, hide_index=True)
 
-st.caption("Alan Health Insurance - Framework de Reporting Actuarial y de Producto v3.0.")
+# --- BANNER DE CIERRE CON MARCA PERSONAL ---
+st.markdown("""
+<div class="footer-brand-box">
+    <div>
+        <div class="footer-brand-title">Creado por Pablo Guidi</div>
+        <div class="footer-brand-sub">Modelización Actuarial Avanzada • Analytics de Salud • Optimización P&L de Seguros</div>
+    </div>
+    <div class="footer-badge">
+        💜 Alan Health Insurance Framework
+    </div>
+</div>
+""", unsafe_allow_html=True)
