@@ -31,7 +31,7 @@ st.markdown("""
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* CONTENEDOR HEADER UNIFICADO (COMPACTO Y AJUSTADO) */
+    /* CONTENEDOR HEADER UNIFICADO */
     .custom-header {
         display: flex;
         justify-content: space-between;
@@ -44,7 +44,7 @@ st.markdown("""
     .header-left {
         display: flex;
         align-items: center;
-        gap: 16px; /* Separación justa y profesional entre logo y texto */
+        gap: 16px;
         flex: 1;
     }
 
@@ -63,7 +63,7 @@ st.markdown("""
         line-height: 1.2;
     }
 
-    /* BANNER MARCA PERSONAL (Pablo Guidi) */
+    /* BANNER MARCA PERSONAL (PABLO GUIDI - INSURANCE EXPERT ALAN) */
     .personal-brand-header-badge {
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         border: 1.5px solid #6366F1;
@@ -138,7 +138,7 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* SIDEBAR MARCA PERSONAL */
+    /* SIDEBAR MARCA PERSONAL (ALINEADO A LA VACANTE) */
     .sidebar-brand-card {
         background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
         border: 1px solid #DDD6FE;
@@ -179,7 +179,19 @@ st.markdown("""
     .sidebar-brand-role {
         font-size: 0.80rem;
         color: #5956E9;
-        font-weight: 600;
+        font-weight: 700;
+    }
+
+    .brand-status-pill {
+        display: inline-block;
+        background-color: #EEF2FF;
+        color: #4F46E5;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-top: 10px;
+        border: 1px solid #C7D2FE;
     }
 
     [data-testid="stSidebar"] {
@@ -227,7 +239,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER UNIFICADO Y COMPACTO ---
+# --- HEADER UNIFICADO ---
 if logo_b64:
     logo_img_tag = f'<img src="data:image/png;base64,{logo_b64}" class="header-logo" alt="Alan Logo">'
 else:
@@ -242,23 +254,23 @@ st.markdown(f"""
     <div class="personal-brand-header-badge">
         <div class="brand-avatar">PG</div>
         <div class="brand-info-text">
-            <span class="brand-title">DESARROLLADO POR</span>
+            <span class="brand-title">INSURANCE EXPERT (SPAIN)</span>
             <span class="brand-name">Pablo Guidi</span>
         </div>
     </div>
 </div>
 <p class="sub-description">
 Framework de reporting interno mensual diseñado bajo los principios de <b>transparencia radical</b> de Alan. 
-Permite monitorizar la cuenta de resultados técnica, los <i>Key Actuarial Drivers</i> y la rentabilidad por segmento y producto.
+Permite monitorizar la cuenta de resultados técnica, la estrategia de <i>Pricing & Re-pricing</i> y la rentabilidad del portfolio.
 </p>
 """, unsafe_allow_html=True)
 
 st.divider()
 
-# --- SIDEBAR CON LA MASCOTA 3D Y PARÁMETROS ---
+# --- SIDEBAR CON MARCA PERSONAL ALINEADA A ALAN ---
 with st.sidebar:
     if mascot_b64:
-        st.markdown(f'<img src="data:image/png;base64,{mascot_b64}" style="width: 170px; display: block; margin: 0 auto;">', unsafe_allow_html=True)
+        st.markdown(f'<img src="data:image/png;base64,{mascot_b64}" style="width: 160px; display: block; margin: 0 auto;">', unsafe_allow_html=True)
 
     st.markdown("""
     <div class="sidebar-brand-card">
@@ -266,12 +278,16 @@ with st.sidebar:
             <div class="sidebar-avatar">PG</div>
             <div>
                 <div class="sidebar-brand-name">Pablo Guidi</div>
-                <div class="sidebar-brand-role">Consultoría Actuarial</div>
+                <div class="sidebar-brand-role">Insurance Expert • Spanish Market</div>
             </div>
         </div>
-        <div style="font-size:0.83rem; color:#4B5563; line-height:1.4;">
-            Tarificación Salud, Reservas IBNR/RBNS y Modelización P&L.
+        <div style="font-size:0.81rem; color:#4B5563; line-height:1.45;">
+            <b>Enfoque técnico & negocio:</b><br>
+            • Pricing & Re-pricing Strategy<br>
+            • Margin Monitoring & Portfolio P&L<br>
+            • Risk Steering & Key Account Tools
         </div>
+        <div class="brand-status-pill">🇪🇸 Health Insurance & Actuarial Quantitative</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -406,12 +422,12 @@ ratios_df = pd.DataFrame({
 
 st.dataframe(ratios_df, use_container_width=True, hide_index=True)
 
-# --- BANNER DE CIERRE MARCA PERSONAL ---
+# --- BANNER DE CIERRE ALINEADO A LA VACANTE ---
 st.markdown("""
 <div class="footer-brand-box">
     <div>
-        <div class="footer-brand-title">Creado por Pablo Guidi</div>
-        <div class="footer-brand-sub">Modelización Actuarial Avanzada • Analytics de Salud • Optimización P&L de Seguros</div>
+        <div class="footer-brand-title">Pablo Guidi — Insurance Expert (Spanish Market)</div>
+        <div class="footer-brand-sub">Pricing & Re-pricing Strategy • Portfolio Profitability & Margin Steering • Technical Leadership</div>
     </div>
     <div class="footer-badge">
         💜 Alan Health Insurance Framework
