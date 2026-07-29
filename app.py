@@ -138,7 +138,7 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* SIDEBAR MARCA PERSONAL (ALINEADO A LA VACANTE) */
+    /* SIDEBAR MARCA PERSONAL */
     .sidebar-brand-card {
         background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
         border: 1px solid #DDD6FE;
@@ -312,8 +312,9 @@ with st.sidebar:
     frecuencia_reclamos = st.slider("Frecuencia (Reclamos / Miembro / Mes)", min_value=0.2, max_value=2.0, value=0.65, step=0.05)
     costo_medio_reclamo = st.number_input("Costo Medio por Reclamo (€)", min_value=20.0, max_value=300.0, value=58.0, step=2.0)
 
-    rbns_pct = st.slider("Reserva RBNS (% Siniestros Pendientes Notificados)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100.0
-    ibnr_pct = st.slider("Reserva IBNR (% Siniestros Incurridos No Reportados)", min_value=1.0, max_value=10.0, value=4.5, step=0.5) / 100.0
+    # CORREGIDO: Reserva de Siniestros Pendientes (RSP / RBNS)
+    rsp_pct = st.slider("Reserva de Siniestros Pendientes (RSP / RBNS) (%)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100.0
+    ibnr_pct = st.slider("Reserva IBNR (% Siniestros No Reportados)", min_value=1.0, max_value=10.0, value=4.5, step=0.5) / 100.0
     adopcion_prevencion = st.slider("Adopción Salud Digital / Prevención (%)", min_value=10, max_value=100, value=55, step=5) / 100.0
 
     st.header("💸 Cargas de Gastos y Operación (% Prima)")
@@ -328,9 +329,9 @@ siniestros_pagados_base = num_miembros * frecuencia_reclamos * costo_medio_recla
 reduccion_prevencion = adopcion_prevencion * 0.07 
 siniestros_pagados = siniestros_pagados_base * (1.0 - reduccion_prevencion)
 
-rbns_monto = siniestros_pagados * rbns_pct
-ibnr_monto = (siniestros_pagados + rbns_monto) * ibnr_pct
-siniestros_totales_incurridos = siniestros_pagados + rbns_monto + ibnr_monto
+rsp_monto = siniestros_pagados * rsp_pct
+ibnr_monto = (siniestros_pagados + rsp_monto) * ibnr_pct
+siniestros_totales_incurridos = siniestros_pagados + rsp_monto + ibnr_monto
 
 comisiones_monto = ingresos_primas_mes * comisiones_pct
 gastos_admin_monto = ingresos_primas_mes * operaciones_admin_pct
@@ -360,11 +361,11 @@ col_left, col_right = st.columns(2)
 
 with col_left:
     st.subheader("📊 Desglose de la Cuenta de Resultados (P&L Actuarial)")
-    conceptos = ["Primas Devengadas", "Siniestros Pagados", "Reserva RBNS", "Reserva IBNR", "Gastos Operativos & CAC", "Resultado Neto"]
+    conceptos = ["Primas Devengadas", "Siniestros Pagados", "Reserva Siniestros Pendientes (RSP)", "Reserva IBNR", "Gastos Operativos & CAC", "Resultado Neto"]
     valores = [
         ingresos_primas_mes, 
         -siniestros_pagados, 
-        -rbns_monto, 
+        -rsp_monto, 
         -ibnr_monto, 
         -gastos_totales_monto, 
         resultado_tecnico_neto
@@ -393,7 +394,7 @@ with col_left:
 with col_right:
     st.subheader("📈 Sensibilidad Combined Ratio vs Adopción Preventiva")
     adop_range = np.linspace(0.1, 1.0, 10)
-    lr_range = [((siniestros_pagados_base * (1 - (a * 0.07))) * (1 + rbns_pct) * (1 + ibnr_pct)) / ingresos_primas_mes for a in adop_range]
+    lr_range = [((siniestros_pagados_base * (1 - (a * 0.07))) * (1 + rsp_pct) * (1 + ibnr_pct)) / ingresos_primas_mes for a in adop_range]
     cr_range = [lr + expense_ratio for lr in lr_range]
     
     df_cr = pd.DataFrame({"Adopción Salud Digital (%)": adop_range * 100, "Combined Ratio (%)": np.array(cr_range) * 100})
