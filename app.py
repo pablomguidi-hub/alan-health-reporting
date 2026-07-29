@@ -444,6 +444,21 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
  
+    st.header("📅 Periodo de Reporting")
+    _meses_es = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    import datetime as _dt
+    _hoy = _dt.date.today()
+    col_mes, col_anio = st.columns(2)
+    with col_mes:
+        mes_seleccionado = st.selectbox("Mes", _meses_es, index=_hoy.month - 1)
+    with col_anio:
+        anio_seleccionado = st.selectbox(
+            "Año",
+            list(range(_hoy.year - 2, _hoy.year + 2)),
+            index=2  # año actual por defecto
+        )
+ 
     st.header("🏢 Segmento de Cliente y Oferta")
     segmento = st.radio("Tipo de Cliente", ["Empresas (B2B)", "Individuales / TNS (B2C)"])
  
@@ -499,6 +514,14 @@ combined_ratio = loss_ratio + expense_ratio
 auto_claims_rate = min(0.96, 0.82 + (adopcion_prevencion * 0.12))
  
 # --- TARJETAS DE MÉTRICAS CLAVE (KPIs) ---
+st.markdown(f"""
+<div style="display:inline-flex; align-items:center; gap:8px; background:#EEF2FF;
+            border:1px solid #C7D2FE; border-radius:20px; padding:5px 14px;
+            margin-bottom:14px; font-size:0.85rem; font-weight:700; color:#4F46E5;">
+    📅 Periodo de Reporting: {mes_seleccionado} {anio_seleccionado}
+</div>
+""", unsafe_allow_html=True)
+ 
 col1, col2, col3, col4 = st.columns(4)
  
 col1.metric("Primas Devengadas Mes", f"{ingresos_primas_mes:,.0f} €")
@@ -587,3 +610,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+ 
