@@ -124,18 +124,6 @@ st.markdown("""
         box-shadow: 0 0 0 6px rgba(89, 86, 233, 0.35) !important;
     }
  
-    /* --- RADIO BUTTONS: círculo exterior e interior seleccionado --- */
-    div[data-testid="stRadio"] label div:first-child {
-        border-color: #5956E9 !important;
-    }
-    div[data-testid="stRadio"] label div:first-child > div {
-        background-color: #5956E9 !important;
-    }
-    div[data-testid="stRadio"] input:checked + div {
-        border-color: #5956E9 !important;
-        background-color: #5956E9 !important;
-    }
- 
     /* --- CHECKBOX (por si se usan) --- */
     div[data-testid="stCheckbox"] label span[data-testid="stMarkdownContainer"] {
         color: inherit;
@@ -586,3 +574,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+ 
