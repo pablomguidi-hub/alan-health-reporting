@@ -37,6 +37,12 @@ st.markdown("""
         gap: 18px;
     }
 
+    .official-alan-logo {
+        height: 44px;
+        width: auto;
+        object-fit: contain;
+    }
+
     .main-title-text {
         color: #111827;
         font-size: 1.85rem;
@@ -218,23 +224,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER SUPERIOR CON NUEVO LOGO OFICIAL DE ALAN (IMAGEN 2) Y MARCA PERSONAL ---
+# --- HEADER SUPERIOR CON LOGO OFICIAL (ALAN.COM) Y MARCA PERSONAL ---
 st.markdown("""
 <div class="header-container">
     <div class="logo-title-box">
-        <!-- Nuevo Logo Oficial de Alan (Koala Minimalista Morado + Tipografía) -->
-        <svg height="42" viewBox="0 0 160 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Oreja Izquierda -->
-            <rect x="2" y="11" width="12" height="9" rx="4.5" fill="#5956E9"/>
-            <!-- Oreja Derecha -->
-            <rect x="37" y="11" width="12" height="9" rx="4.5" fill="#5956E9"/>
-            <!-- Cabeza Principal / Nariz -->
-            <rect x="11" y="13" width="29" height="17" rx="8.5" fill="#5956E9"/>
-            <!-- Sonrisa / Barbilla -->
-            <rect x="15" y="29" width="21" height="8" rx="4" fill="#5956E9"/>
-            <!-- Tipografía alan -->
-            <text x="55" y="34" font-family="'Comfortaa', 'Fredoka', 'Quicksand', -apple-system, sans-serif" font-weight="700" font-size="34" fill="#5956E9" letter-spacing="-1px">alan</text>
-        </svg>
+        <!-- Logo Oficial de Alan cargado directamente -->
+        <img class="official-alan-logo" 
+             src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Alan_logo.png/600px-Alan_logo.png" 
+             alt="Alan Logo Official" />
         <h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
     </div>
     <div class="personal-brand-header-badge">
