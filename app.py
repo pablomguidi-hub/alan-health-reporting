@@ -22,12 +22,13 @@ def get_base64_image(image_path):
 logo_b64 = get_base64_image("logo_alan.png")
 mascot_b64 = get_base64_image("mascot_alan.png")
 
-# --- ESTILOS CSS PERSONALIZADOS ---
+# --- ESTILOS CSS PERSONALIZADOS CON SOBRESCRITURA TOTAL DE SLIDERS ---
 st.markdown("""
 <style>
-    /* --- FORZAR COLOR PRIMARIO DE STREAMLIT A AZUL/PÚRPURA ALAN (#5956E9) --- */
-    :root, .stApp {
+    /* 1. REDEFINICIÓN DE VARIABLES PRIMARIAS DE STREAMLIT A AZUL/PÚRPURA (#5956E9) */
+    :root, [data-testid="stAppViewContainer"], [data-testid="stApp"], [data-testid="stSidebar"] {
         --primary-color: #5956E9 !important;
+        --primary: #5956E9 !important;
     }
 
     .stApp {
@@ -36,26 +37,36 @@ st.markdown("""
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* SOBRESCRITURA EXHAUSTIVA DE SLIDERS (BASEWEB & STREAMLIT COMPONENTS) */
-    div[data-testid="stSlider"] {
+    /* 2. CAMBIO DEL NÚMERO / VALOR DE TEXTO SOBRE EL SLIDER (Ej. 0.20, 3.00, 4.50, 80) */
+    div[data-testid="stSlider"] * {
         --primary-color: #5956E9 !important;
     }
     
+    div[data-testid="stSlider"] div[style*="color"],
+    div[data-testid="stSlider"] span[style*="color"],
+    div[data-testid="stSlider"] div[data-testid="stStyledText"] {
+        color: #5956E9 !important;
+    }
+
+    /* 3. BARRA ACTIVA RELLENA DEL SLIDER */
+    div[data-baseweb="slider"] div[style*="background"] {
+        background-color: #5956E9 !important;
+        background: #5956E9 !important;
+    }
+
+    /* 4. TIRADOR / CÍRCULO BOTÓN DEL SLIDER (THUMB) */
     div[data-baseweb="slider"] [role="slider"] {
         background-color: #5956E9 !important;
         border-color: #5956E9 !important;
-        box-shadow: 0 0 0 3px rgba(89, 86, 233, 0.2) !important;
+        box-shadow: 0 0 0 3px rgba(89, 86, 233, 0.25) !important;
     }
 
-    div[data-baseweb="slider"] div[style*="background-color"] {
+    div[data-baseweb="slider"] [role="slider"]:hover,
+    div[data-baseweb="slider"] [role="slider"]:focus,
+    div[data-baseweb="slider"] [role="slider"]:active {
         background-color: #5956E9 !important;
-    }
-
-    /* Forzar texto de los valores del slider */
-    div[data-testid="stSlider"] div[data-testid="stStyledText"],
-    div[data-testid="stSlider"] p,
-    div[data-testid="stSlider"] span {
-        color: #5956E9 !important;
+        border-color: #5956E9 !important;
+        box-shadow: 0 0 0 6px rgba(89, 86, 233, 0.35) !important;
     }
 
     /* CONTENEDOR HEADER UNIFICADO */
@@ -90,7 +101,7 @@ st.markdown("""
         line-height: 1.2;
     }
 
-    /* BANNER MARCA PERSONAL (PABLO GUIDI - INSURANCE EXPERT ALAN) */
+    /* BANNER MARCA PERSONAL */
     .personal-brand-header-badge {
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         border: 1.5px solid #6366F1;
@@ -449,7 +460,7 @@ ratios_df = pd.DataFrame({
 
 st.dataframe(ratios_df, use_container_width=True, hide_index=True)
 
-# --- BANNER DE CIERRE ALINEADO A LA VACANTE ---
+# --- BANNER DE CIERRE ---
 st.markdown("""
 <div class="footer-brand-box">
     <div>
