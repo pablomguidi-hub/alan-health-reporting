@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import base64
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -9,6 +10,17 @@ st.set_page_config(
     page_icon="💜",
     layout="wide"
 )
+
+# --- FUNCIÓN HELPER PARA CARGAR IMÁGENES LOCALES EN HTML ---
+def get_base64_image(image_path):
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    except Exception:
+        return None
+
+logo_b64 = get_base64_image("logo_alan.png")
+mascot_b64 = get_base64_image("mascot_alan.png")
 
 # --- ESTILOS CSS PERSONALIZADOS ---
 st.markdown("""
@@ -19,12 +31,35 @@ st.markdown("""
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Contenedor del Título */
+    /* CONTENEDOR HEADER UNIFICADO (COMPACTO Y AJUSTADO) */
+    .custom-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 8px;
+        width: 100%;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px; /* Separación justa y profesional entre logo y texto */
+        flex: 1;
+    }
+
+    .header-logo {
+        height: 48px;
+        width: auto;
+        object-fit: contain;
+    }
+
     .main-title-text {
         color: #111827;
-        font-size: 1.85rem;
+        font-size: 1.75rem;
         font-weight: 800;
-        margin: 0;
+        margin: 0 !important;
+        padding: 0 !important;
         line-height: 1.2;
     }
 
@@ -33,16 +68,17 @@ st.markdown("""
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         border: 1.5px solid #6366F1;
         border-radius: 12px;
-        padding: 10px 16px;
+        padding: 8px 16px;
         display: flex;
         align-items: center;
         gap: 12px;
+        white-space: nowrap;
         box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
     }
 
     .brand-avatar {
-        width: 40px;
-        height: 40px;
+        width: 38px;
+        height: 38px;
         background-color: #5956E9;
         color: white;
         font-weight: 800;
@@ -60,7 +96,7 @@ st.markdown("""
     }
 
     .brand-title {
-        font-size: 0.68rem;
+        font-size: 0.65rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: #4F46E5;
@@ -77,8 +113,8 @@ st.markdown("""
     .sub-description {
         color: #6B7280;
         font-size: 1.05rem;
-        margin-top: 10px;
-        margin-bottom: 25px;
+        margin-top: 8px;
+        margin-bottom: 20px;
         line-height: 1.5;
     }
 
@@ -191,20 +227,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER CON LOGO OFICIAL LOCAL Y MARCA PERSONAL ---
-header_col1, header_col2, header_col3 = st.columns([2, 5.5, 2.5])
+# --- HEADER UNIFICADO Y COMPACTO ---
+if logo_b64:
+    logo_img_tag = f'<img src="data:image/png;base64,{logo_b64}" class="header-logo" alt="Alan Logo">'
+else:
+    logo_img_tag = '<span style="font-size: 1.8rem; font-weight: 800; color: #5956E9;">💜 alan</span>'
 
-with header_col1:
-    try:
-        st.image("logo_alan.png", use_container_width=True)
-    except Exception:
-        st.subheader("💜 alan")
-
-with header_col2:
-    st.markdown('<h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>', unsafe_allow_html=True)
-
-with header_col3:
-    st.markdown("""
+st.markdown(f"""
+<div class="custom-header">
+    <div class="header-left">
+        {logo_img_tag}
+        <h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
+    </div>
     <div class="personal-brand-header-badge">
         <div class="brand-avatar">PG</div>
         <div class="brand-info-text">
@@ -212,9 +246,7 @@ with header_col3:
             <span class="brand-name">Pablo Guidi</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("""
+</div>
 <p class="sub-description">
 Framework de reporting interno mensual diseñado bajo los principios de <b>transparencia radical</b> de Alan. 
 Permite monitorizar la cuenta de resultados técnica, los <i>Key Actuarial Drivers</i> y la rentabilidad por segmento y producto.
@@ -225,11 +257,8 @@ st.divider()
 
 # --- SIDEBAR CON LA MASCOTA 3D Y PARÁMETROS ---
 with st.sidebar:
-    # Mascota 3D de Alan al inicio del Sidebar
-    try:
-        st.image("mascot_alan.png", width=180)
-    except Exception:
-        pass
+    if mascot_b64:
+        st.markdown(f'<img src="data:image/png;base64,{mascot_b64}" style="width: 170px; display: block; margin: 0 auto;">', unsafe_allow_html=True)
 
     st.markdown("""
     <div class="sidebar-brand-card">
