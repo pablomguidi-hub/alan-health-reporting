@@ -177,52 +177,64 @@ st.markdown("""
         justify-content: space-between;
         align-items: center;
         gap: 20px;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
         width: 100%;
     }
  
     .header-left {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 14px;
         flex: 1;
+        min-width: 0;
     }
  
     .header-logo {
-        height: 48px;
+        height: 34px;
         width: auto;
         object-fit: contain;
+        border-radius: 6px;
+        flex-shrink: 0;
     }
  
     .main-title-text {
         color: #111827;
-        font-size: 1.75rem;
+        font-size: 1.35rem;
         font-weight: 800;
         margin: 0 !important;
         padding: 0 !important;
-        line-height: 1.2;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+    }
+ 
+    /* Oculta el icono de anclaje (🔗) que Streamlit añade automáticamente a los <h1>-<h6> */
+    .main-title-text a,
+    [data-testid="stHeaderActionElements"],
+    .main-title-text .anchor-link {
+        display: none !important;
     }
  
     /* BANNER MARCA PERSONAL */
     .personal-brand-header-badge {
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         border: 1.5px solid #6366F1;
-        border-radius: 12px;
-        padding: 8px 16px;
+        border-radius: 10px;
+        padding: 6px 14px;
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         white-space: nowrap;
+        flex-shrink: 0;
         box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
     }
  
     .brand-avatar {
-        width: 38px;
-        height: 38px;
+        width: 32px;
+        height: 32px;
         background-color: #5956E9;
         color: white;
         font-weight: 800;
-        font-size: 1.05rem;
+        font-size: 0.9rem;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -233,10 +245,11 @@ st.markdown("""
     .brand-info-text {
         display: flex;
         flex-direction: column;
+        line-height: 1.15;
     }
  
     .brand-title {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: #4F46E5;
@@ -244,17 +257,17 @@ st.markdown("""
     }
  
     .brand-name {
-        font-size: 1.05rem;
+        font-size: 0.92rem;
         font-weight: 800;
         color: #1E1B4B;
-        margin-top: -2px;
+        margin-top: -1px;
     }
  
     .sub-description {
         color: #6B7280;
-        font-size: 1.05rem;
-        margin-top: 8px;
-        margin-bottom: 20px;
+        font-size: 0.92rem;
+        margin-top: 6px;
+        margin-bottom: 14px;
         line-height: 1.5;
     }
  
@@ -574,4 +587,3 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
- 
