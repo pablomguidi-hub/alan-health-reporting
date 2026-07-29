@@ -19,30 +19,7 @@ st.markdown("""
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Header Container */
-    .header-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #E2E8F0;
-        margin-bottom: 25px;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .logo-title-box {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-    }
-
-    .official-alan-logo {
-        height: 44px;
-        width: auto;
-        object-fit: contain;
-    }
-
+    /* Contenedor del Título */
     .main-title-text {
         color: #111827;
         font-size: 1.85rem;
@@ -56,7 +33,7 @@ st.markdown("""
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         border: 1.5px solid #6366F1;
         border-radius: 12px;
-        padding: 10px 18px;
+        padding: 10px 16px;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -64,12 +41,12 @@ st.markdown("""
     }
 
     .brand-avatar {
-        width: 42px;
-        height: 42px;
+        width: 40px;
+        height: 40px;
         background-color: #5956E9;
         color: white;
         font-weight: 800;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -91,16 +68,16 @@ st.markdown("""
     }
 
     .brand-name {
-        font-size: 1.10rem;
+        font-size: 1.05rem;
         font-weight: 800;
         color: #1E1B4B;
-        margin-top: -1px;
+        margin-top: -2px;
     }
 
     .sub-description {
         color: #6B7280;
         font-size: 1.05rem;
-        margin-top: -10px;
+        margin-top: 10px;
         margin-bottom: 25px;
         line-height: 1.5;
     }
@@ -130,7 +107,8 @@ st.markdown("""
         background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
         border: 1px solid #DDD6FE;
         border-radius: 14px;
-        padding: 18px;
+        padding: 16px;
+        margin-top: 15px;
         margin-bottom: 25px;
         box-shadow: 0 4px 10px rgba(99, 102, 241, 0.08);
     }
@@ -139,15 +117,15 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     .sidebar-avatar {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
         background: linear-gradient(135deg, #5956E9 0%, #8B5CF6 100%);
         color: white;
-        font-size: 1.2rem;
+        font-size: 1.15rem;
         font-weight: 800;
         border-radius: 10px;
         display: flex;
@@ -157,26 +135,15 @@ st.markdown("""
 
     .sidebar-brand-name {
         font-weight: 800;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         color: #1E1B4B;
         line-height: 1.2;
     }
 
     .sidebar-brand-role {
-        font-size: 0.82rem;
+        font-size: 0.80rem;
         color: #5956E9;
         font-weight: 600;
-    }
-
-    .brand-status-pill {
-        display: inline-block;
-        background-color: #DEF7EC;
-        color: #03543F;
-        font-size: 0.75rem;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 20px;
-        margin-top: 10px;
     }
 
     [data-testid="stSidebar"] {
@@ -224,16 +191,20 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER SUPERIOR CON LOGO OFICIAL (ALAN.COM) Y MARCA PERSONAL ---
-st.markdown("""
-<div class="header-container">
-    <div class="logo-title-box">
-        <!-- Logo Oficial de Alan cargado directamente -->
-        <img class="official-alan-logo" 
-             src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Alan_logo.png/600px-Alan_logo.png" 
-             alt="Alan Logo Official" />
-        <h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
-    </div>
+# --- HEADER CON LOGO OFICIAL LOCAL Y MARCA PERSONAL ---
+header_col1, header_col2, header_col3 = st.columns([2, 5.5, 2.5])
+
+with header_col1:
+    try:
+        st.image("logo_alan.png", use_container_width=True)
+    except Exception:
+        st.subheader("💜 alan")
+
+with header_col2:
+    st.markdown('<h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>', unsafe_allow_html=True)
+
+with header_col3:
+    st.markdown("""
     <div class="personal-brand-header-badge">
         <div class="brand-avatar">PG</div>
         <div class="brand-info-text">
@@ -241,28 +212,37 @@ st.markdown("""
             <span class="brand-name">Pablo Guidi</span>
         </div>
     </div>
-</div>
+    """, unsafe_allow_html=True)
+
+st.markdown("""
 <p class="sub-description">
 Framework de reporting interno mensual diseñado bajo los principios de <b>transparencia radical</b> de Alan. 
 Permite monitorizar la cuenta de resultados técnica, los <i>Key Actuarial Drivers</i> y la rentabilidad por segmento y producto.
 </p>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
+st.divider()
+
+# --- SIDEBAR CON LA MASCOTA 3D Y PARÁMETROS ---
 with st.sidebar:
+    # Mascota 3D de Alan al inicio del Sidebar
+    try:
+        st.image("mascot_alan.png", width=180)
+    except Exception:
+        pass
+
     st.markdown("""
     <div class="sidebar-brand-card">
         <div class="sidebar-brand-header">
             <div class="sidebar-avatar">PG</div>
             <div>
                 <div class="sidebar-brand-name">Pablo Guidi</div>
-                <div class="sidebar-brand-role">Consultoría & Analytics Actuarial</div>
+                <div class="sidebar-brand-role">Consultoría Actuarial</div>
             </div>
         </div>
         <div style="font-size:0.83rem; color:#4B5563; line-height:1.4;">
-            Especialista en Tarificación Salud, Reservas IBNR/RBNS y Modelización P&L.
+            Tarificación Salud, Reservas IBNR/RBNS y Modelización P&L.
         </div>
-        <div class="brand-status-pill">🟢 Pablo Guidi</div>
     </div>
     """, unsafe_allow_html=True)
 
