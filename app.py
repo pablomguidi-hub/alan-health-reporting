@@ -31,6 +31,27 @@ st.markdown("""
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
+    /* --- CAMBIO DE COLOR DE SLIDERS AL AZUL/PÚRPURA ALAN (#5956E9) --- */
+    /* Tirador / Botón circular del slider */
+    div[data-testid="stSlider"] [role="slider"] {
+        background-color: #5956E9 !important;
+        border-color: #5956E9 !important;
+        box-shadow: 0 0 0 3px rgba(89, 86, 233, 0.2) !important;
+    }
+    /* Barra del track activo (seleccionado) */
+    div[data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
+        background-color: #5956E9 !important;
+    }
+    div[data-testid="stSlider"] div[data-baseweb="slider"] div[style*="background-color"] {
+        background-color: #5956E9 !important;
+    }
+    /* Color de los textos numéricos e indicadores del slider */
+    div[data-testid="stSlider"] div[data-testid="stStyledText"],
+    div[data-testid="stSlider"] p,
+    div[data-testid="stSlider"] span {
+        color: #5956E9 !important;
+    }
+
     /* CONTENEDOR HEADER UNIFICADO */
     .custom-header {
         display: flex;
@@ -312,7 +333,6 @@ with st.sidebar:
     frecuencia_reclamos = st.slider("Frecuencia (Reclamos / Miembro / Mes)", min_value=0.2, max_value=2.0, value=0.65, step=0.05)
     costo_medio_reclamo = st.number_input("Costo Medio por Reclamo (€)", min_value=20.0, max_value=300.0, value=58.0, step=2.0)
 
-    # CORREGIDO: Reserva de Siniestros Pendientes (RSP / RBNS)
     rsp_pct = st.slider("Reserva de Siniestros Pendientes (RSP / RBNS) (%)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100.0
     ibnr_pct = st.slider("Reserva IBNR (% Siniestros No Reportados)", min_value=1.0, max_value=10.0, value=4.5, step=0.5) / 100.0
     adopcion_prevencion = st.slider("Adopción Salud Digital / Prevención (%)", min_value=10, max_value=100, value=55, step=5) / 100.0
