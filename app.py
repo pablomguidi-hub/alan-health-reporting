@@ -1,3 +1,40 @@
+import os
+ 
+# --- AUTOCONFIGURACIÓN DE TEMA (para no depender de un config.toml aparte) ---
+# Streamlit solo lee el color primario (theme.primaryColor) de .streamlit/config.toml
+# al ARRANCAR el proceso. Por eso, si ese archivo no existe (o está desactualizado),
+# lo generamos aquí mismo y pedimos un único reinicio. A partir de ese momento,
+# todos los sliders, radios, checkboxes, etc. salen en azul de forma NATIVA,
+# sin necesidad de parches CSS frágiles.
+_STREAMLIT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".streamlit")
+_CONFIG_PATH = os.path.join(_STREAMLIT_DIR, "config.toml")
+_THEME_TOML = """[theme]
+primaryColor = "#5956E9"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F8FAFC"
+textColor = "#111827"
+font = "sans serif"
+"""
+ 
+def _ensure_theme_config() -> bool:
+    """Crea/actualiza .streamlit/config.toml si hace falta. Devuelve True si acaba de crearse/cambiarse."""
+    try:
+        os.makedirs(_STREAMLIT_DIR, exist_ok=True)
+        necesita_escribir = True
+        if os.path.exists(_CONFIG_PATH):
+            with open(_CONFIG_PATH, "r", encoding="utf-8") as f:
+                contenido_actual = f.read()
+            necesita_escribir = "5956E9" not in contenido_actual
+        if necesita_escribir:
+            with open(_CONFIG_PATH, "w", encoding="utf-8") as f:
+                f.write(_THEME_TOML)
+            return True
+    except Exception:
+        pass
+    return False
+ 
+_TEMA_RECIEN_CREADO = _ensure_theme_config()
+ 
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -10,6 +47,17 @@ st.set_page_config(
     page_icon="💜",
     layout="wide"
 )
+ 
+# --- AVISO DE REINICIO ÚNICO (solo la primera vez que se crea/actualiza el tema) ---
+if _TEMA_RECIEN_CREADO:
+    st.warning(
+        "⚙️ **Configuración de color aplicada.** Se ha creado/actualizado "
+        "`.streamlit/config.toml` con el azul de Alan (#5956E9). "
+        "Detén la app (Ctrl+C en la terminal) y vuelve a ejecutar "
+        "`streamlit run app_alan_health.py` **una sola vez** para que los "
+        "sliders, radios y demás controles se pinten en azul de forma nativa."
+    )
+    st.stop()
  
 # --- FUNCIÓN HELPER PARA CARGAR IMÁGENES LOCALES EN HTML ---
 def get_base64_image(image_path):
@@ -104,6 +152,35 @@ st.markdown("""
     div[data-baseweb="select"] > div:focus-within {
         border-color: #5956E9 !important;
         box-shadow: 0 0 0 1px #5956E9 !important;
+    }
+ 
+    /* --- RED DE SEGURIDAD: pisa el rojo inline (#FF4B4B / rgb(255,75,75)) --- */
+    /* Streamlit inyecta este color directamente vía style="" tomado del theme.        */
+    /* Si config.toml no se aplica, esto lo corrige igualmente.                        */
+    div[data-baseweb="slider"] [style*="rgb(255, 75, 75)"],
+    div[data-baseweb="slider"] [style*="rgb(255,75,75)"],
+    div[data-baseweb="slider"] [style*="#FF4B4B"],
+    div[data-baseweb="slider"] [style*="#ff4b4b"] {
+        background-color: #5956E9 !important;
+        background: #5956E9 !important;
+        border-color: #5956E9 !important;
+        color: #5956E9 !important;
+    }
+    div[data-testid="stSlider"] [style*="rgb(255, 75, 75)"],
+    div[data-testid="stSlider"] [style*="rgb(255,75,75)"] {
+        color: #5956E9 !important;
+        background-color: #5956E9 !important;
+    }
+    div[data-testid="stRadio"] [style*="rgb(255, 75, 75)"],
+    div[data-testid="stRadio"] [style*="#FF4B4B"] {
+        background-color: #5956E9 !important;
+        border-color: #5956E9 !important;
+        fill: #5956E9 !important;
+    }
+    /* Cubre el caso en que el color se aplique vía SVG fill en vez de background */
+    div[data-baseweb="slider"] svg [fill="rgb(255, 75, 75)"],
+    div[data-baseweb="slider"] svg [fill="#FF4B4B"] {
+        fill: #5956E9 !important;
     }
  
     /* CONTENEDOR HEADER UNIFICADO */
