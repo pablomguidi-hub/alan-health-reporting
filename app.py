@@ -3,17 +3,14 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-# --- CONFIGURACIÓN DE PÁGINA (Estilo Alan) ---
+# --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
     page_title="Alan Health Spain - Reporting Actuarial & Business",
     page_icon="💜",
     layout="wide"
 )
 
-# --- BASE64 LOGO ALAN ORIGINAL (Koala + Tipografía Oficial) ---
-ALAN_LOGO_B64 = "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"
-
-# --- ESTILOS CSS PERSONALIZADOS (Brand Alan & Marca Personal Pablo Guidi) ---
+# --- ESTILOS CSS PERSONALIZADOS ---
 st.markdown("""
 <style>
     .stApp {
@@ -37,12 +34,7 @@ st.markdown("""
     .logo-title-box {
         display: flex;
         align-items: center;
-        gap: 20px;
-    }
-
-    .alan-logo-img {
-        height: 52px;
-        width: auto;
+        gap: 18px;
     }
 
     .main-title-text {
@@ -53,7 +45,7 @@ st.markdown("""
         line-height: 1.2;
     }
 
-    /* BANNER DESTACADO MARCA PERSONAL (Pablo Guidi) */
+    /* BANNER MARCA PERSONAL (Pablo Guidi) */
     .personal-brand-header-badge {
         background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
         border: 1.5px solid #6366F1;
@@ -66,8 +58,8 @@ st.markdown("""
     }
 
     .brand-avatar {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         background-color: #4F46E5;
         color: white;
         font-weight: 800;
@@ -85,17 +77,18 @@ st.markdown("""
     }
 
     .brand-title {
-        font-size: 0.72rem;
+        font-size: 0.70rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.08em;
         color: #4F46E5;
         font-weight: 700;
     }
 
     .brand-name {
-        font-size: 1.05rem;
+        font-size: 1.10rem;
         font-weight: 800;
         color: #1E1B4B;
+        margin-top: -2px;
     }
 
     .sub-description {
@@ -126,7 +119,7 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* MARCA PERSONAL EN SIDEBAR */
+    /* SIDEBAR MARCA PERSONAL */
     .sidebar-brand-card {
         background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
         border: 1px solid #DDD6FE;
@@ -175,9 +168,9 @@ st.markdown("""
         color: #03543F;
         font-size: 0.75rem;
         font-weight: 700;
-        padding: 3px 10px;
+        padding: 4px 10px;
         border-radius: 20px;
-        margin-top: 8px;
+        margin-top: 10px;
     }
 
     [data-testid="stSidebar"] {
@@ -185,7 +178,7 @@ st.markdown("""
         border-right: 1px solid #E2E8F0;
     }
 
-    /* FOOTER MARCA PERSONAL */
+    /* FOOTER */
     .footer-brand-box {
         background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
         color: #FFFFFF;
@@ -225,18 +218,32 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER SUPERIOR CON LOGO OFICIAL DE ALAN Y MARCA PERSONAL ---
-st.markdown(f"""
+# --- HEADER SUPERIOR CON LOGO OFICIAL SVG (NATIVO) Y MARCA PERSONAL ---
+st.markdown("""
 <div class="header-container">
     <div class="logo-title-box">
-        <img src="data:image/png;base64,{ALAN_LOGO_B64}" class="alan-logo-img" alt="Alan Logo Official">
+        <!-- Logo Alan Oficial SVG -->
+        <svg height="46" viewBox="0 0 150 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 6C12 6 6 12 6 20C6 28 12 34 20 34C28 34 34 28 34 20C34 12 28 6 20 6Z" fill="#6366F1"/>
+            <circle cx="8" cy="11" r="5.5" fill="#6366F1"/>
+            <circle cx="8" cy="11" r="2.5" fill="#EEF2FF"/>
+            <circle cx="32" cy="11" r="5.5" fill="#6366F1"/>
+            <circle cx="32" cy="11" r="2.5" fill="#EEF2FF"/>
+            <ellipse cx="15.5" cy="18" rx="1.8" ry="2.8" fill="#FFFFFF"/>
+            <ellipse cx="24.5" cy="18" rx="1.8" ry="2.8" fill="#FFFFFF"/>
+            <circle cx="15.5" cy="19" r="0.9" fill="#1E1B4B"/>
+            <circle cx="24.5" cy="19" r="0.9" fill="#1E1B4B"/>
+            <path d="M18.5 22.5C18.5 21 21.5 21 21.5 22.5C21.5 24.8 18.5 24.8 18.5 22.5Z" fill="#1E1B4B"/>
+            <path d="M17.5 27.5C19.2 29.2 20.8 29.2 22.5 27.5" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round"/>
+            <text x="44" y="31" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="29" fill="#1E1B4B" letter-spacing="-1">alan</text>
+        </svg>
         <h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
     </div>
     <div class="personal-brand-header-badge">
         <div class="brand-avatar">PG</div>
         <div class="brand-info-text">
-            <span class="brand-title">Dashboard desarrollado por</span>
-            <span class="brand-name">Creado por Pablo Guidi</span>
+            <span class="brand-title">DESARROLLADO POR</span>
+            <span class="brand-name">Pablo Guidi</span>
         </div>
     </div>
 </div>
@@ -246,7 +253,7 @@ Permite monitorizar la cuenta de resultados técnica, los <i>Key Actuarial Drive
 </p>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR: MARCA PERSONAL + CONTEXTO Y OFERTAS OFICIALES DE ALAN ---
+# --- SIDEBAR ---
 with st.sidebar:
     st.markdown("""
     <div class="sidebar-brand-card">
@@ -395,7 +402,7 @@ ratios_df = pd.DataFrame({
 
 st.dataframe(ratios_df, use_container_width=True, hide_index=True)
 
-# --- BANNER DE CIERRE CON MARCA PERSONAL ---
+# --- BANNER DE CIERRE MARCA PERSONAL ---
 st.markdown("""
 <div class="footer-brand-box">
     <div>
