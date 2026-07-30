@@ -40,23 +40,210 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import base64
+import datetime as _dt
  
-# --- CONFIGURACIÓN DE PÁGINA ---
+# --- CONFIGURACIÓN DE PÁGINA (debe ser el primer comando de Streamlit) ---
 st.set_page_config(
     page_title="Alan Health Spain - Reporting Actuarial & Business",
     page_icon="💜",
     layout="wide"
 )
  
+# ============================================================================
+# --- DICCIONARIO DE TRADUCCIONES (Español / English) ---
+# ============================================================================
+TRANSLATIONS = {
+    "es": {
+        "lang_label": "🌐 Idioma / Language",
+        "restart_warning": (
+            "⚙️ **Configuración de color aplicada.** Se ha creado/actualizado "
+            "`.streamlit/config.toml` con el azul de Alan (#5956E9). "
+            "Detén la app (Ctrl+C en la terminal) y vuelve a ejecutar "
+            "`streamlit run app_alan_health.py` **una sola vez** para que los "
+            "sliders, radios y demás controles se pinten en azul de forma nativa."
+        ),
+        "main_title": "Reporting Mensual de Rentabilidad y Drivers Actuariales",
+        "brand_title_header": "EXPERTO EN SEGUROS (ESPAÑA)",
+        "sub_description": (
+            "Framework de reporting interno mensual diseñado bajo los principios de "
+            "<b>transparencia radical</b> de Alan. Permite monitorizar la cuenta de "
+            "resultados técnica, la estrategia de <i>Pricing & Re-pricing</i> y la "
+            "rentabilidad del portfolio."
+        ),
+        "sidebar_role": "Experto en Seguros • Mercado Español",
+        "sidebar_focus_title": "Enfoque técnico & negocio:",
+        "sidebar_focus_items": [
+            "Estrategia de Pricing & Re-pricing",
+            "Monitoreo de Márgenes y P&L de Cartera",
+            "Dirección de Riesgo y Herramientas para Cuentas Clave",
+        ],
+        "sidebar_status_pill": "🇪🇸 Seguro de Salud y Cuantitativo Actuarial",
+        "period_header": "📅 Periodo de Reporting",
+        "month_label": "Mes",
+        "year_label": "Año",
+        "months": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+        "segment_header": "🏢 Segmento de Cliente y Oferta",
+        "client_type_label": "Tipo de Cliente",
+        "client_type_options": ["Empresas (B2B)", "Individuales / TNS (B2C)"],
+        "b2b_offer_label": "Oferta B2B (Elegible Colectivos)",
+        "b2b_members_label": "Número de Asegurados en Colectivo",
+        "b2b_age_label": "Edad Media de la Plantilla (Ajuste Demográfico)",
+        "b2c_offer_label": "Oferta B2C (Trabajadores No Salariados / TNS)",
+        "b2c_members_label": "Número de Asegurados Individuales",
+        "claims_header": "📊 Drivers de Siniestralidad y Reservas",
+        "frequency_label": "Frecuencia (Reclamos / Miembro / Mes)",
+        "avg_cost_label": "Costo Medio por Reclamo (€)",
+        "rsp_label": "Reserva de Siniestros Pendientes (RSP / RBNS) (%)",
+        "ibnr_label": "Reserva IBNR (% Siniestros No Reportados)",
+        "prevention_label": "Adopción Salud Digital / Prevención (%)",
+        "expenses_header": "💸 Cargas de Gastos y Operación (% Prima)",
+        "commissions_label": "Comisiones / Adquisición (CAC) (%)",
+        "admin_label": "Gastos Admin & Operaciones Ops (%)",
+        "reinsurance_label": "Costo de Reaseguro / Capital (%)",
+        "period_badge": "📅 Periodo de Reporting: {mes} {anio}",
+        "kpi_premiums": "Primas Devengadas Mes",
+        "kpi_loss_ratio": "Loss Ratio Incurrido (S/P)",
+        "kpi_loss_ratio_target": "Objetivo <78%",
+        "kpi_combined_ratio": "Combined Ratio Total",
+        "kpi_surplus": "Superávit",
+        "kpi_deficit": "Déficit",
+        "kpi_net_result": "Resultado Técnico Neto Mes",
+        "pnl_subheader": "📊 Desglose de la Cuenta de Resultados (P&L Actuarial)",
+        "pnl_concepts": ["Primas Devengadas", "Siniestros Pagados", "Reserva Siniestros Pendientes (RSP)",
+                          "Reserva IBNR", "Gastos Operativos & CAC", "Resultado Neto"],
+        "pnl_concept_col": "Concepto",
+        "pnl_amount_col": "Monto (€)",
+        "sens_subheader": "📈 Sensibilidad Combined Ratio vs Adopción Preventiva",
+        "sens_x_col": "Adopción Salud Digital (%)",
+        "sens_y_col": "Combined Ratio (%)",
+        "sens_breakeven": "Breakeven (100%)",
+        "sens_target": "Objetivo Alan (90%)",
+        "ratios_subheader": "📑 Resumen de Ratios Actuariales y Financieros",
+        "ratios_col_ratio": "Ratio Actuarial",
+        "ratios_col_value": "Valor Calculado",
+        "ratios_col_benchmark": "Benchmark / Target Alan",
+        "ratios_col_status": "Estado",
+        "ratios_names": [
+            "Loss Ratio Incurrido (Siniestralidad Total / Primas)",
+            "Expense Ratio (Gastos Admin + Comisiones / Primas)",
+            "Combined Ratio (LR + ER)",
+            "Tasa de Automatización de Siniestros (Auto-claims)",
+        ],
+        "ratios_benchmarks": ["< 78.0%", "< 12.0%", "< 90.0%", "> 90.0%"],
+        "status_ok_range": "✅ En Rango",
+        "status_review_rate": "⚠️ Revisar Tarifa",
+        "status_efficient": "✅ Eficiente",
+        "status_high_ga": "⚠️ Alto G&A",
+        "status_profitable": "🟢 Rentable",
+        "status_loss": "🔴 En Pérdida",
+        "status_target_met": "🟢 Objetivo Cumplido",
+        "status_improve_adoption": "🟡 Mejorar Adopción",
+        "footer_name_role": "Pablo Guidi — Experto en Seguros (Mercado Español)",
+        "footer_sub": "Estrategia de Pricing & Re-pricing • Rentabilidad de Cartera y Gestión de Márgenes • Liderazgo Técnico",
+        "footer_badge": "💜 Framework de Seguro de Salud Alan",
+    },
+    "en": {
+        "lang_label": "🌐 Language / Idioma",
+        "restart_warning": (
+            "⚙️ **Color theme applied.** `.streamlit/config.toml` has been "
+            "created/updated with Alan's blue (#5956E9). "
+            "Stop the app (Ctrl+C in the terminal) and run "
+            "`streamlit run app_alan_health.py` again **once** so sliders, "
+            "radio buttons and other controls render in blue natively."
+        ),
+        "main_title": "Monthly Profitability & Actuarial Drivers Report",
+        "brand_title_header": "INSURANCE EXPERT (SPAIN)",
+        "sub_description": (
+            "Internal monthly reporting framework designed under Alan's "
+            "<b>radical transparency</b> principles. It allows monitoring the "
+            "technical income statement, the <i>Pricing & Re-pricing</i> "
+            "strategy, and portfolio profitability."
+        ),
+        "sidebar_role": "Insurance Expert • Spanish Market",
+        "sidebar_focus_title": "Technical & Business Focus:",
+        "sidebar_focus_items": [
+            "Pricing & Re-pricing Strategy",
+            "Margin Monitoring & Portfolio P&L",
+            "Risk Steering & Key Account Tools",
+        ],
+        "sidebar_status_pill": "🇪🇸 Health Insurance & Actuarial Quantitative",
+        "period_header": "📅 Reporting Period",
+        "month_label": "Month",
+        "year_label": "Year",
+        "months": ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"],
+        "segment_header": "🏢 Client Segment & Offer",
+        "client_type_label": "Client Type",
+        "client_type_options": ["Companies (B2B)", "Individuals / Self-employed (B2C)"],
+        "b2b_offer_label": "B2B Offer (Group Eligible)",
+        "b2b_members_label": "Number of Insured in Group",
+        "b2b_age_label": "Average Workforce Age (Demographic Adjustment)",
+        "b2c_offer_label": "B2C Offer (Self-employed Workers)",
+        "b2c_members_label": "Number of Individual Insured",
+        "claims_header": "📊 Claims & Reserves Drivers",
+        "frequency_label": "Frequency (Claims / Member / Month)",
+        "avg_cost_label": "Average Cost per Claim (€)",
+        "rsp_label": "Reported But Not Settled Reserve (RBNS) (%)",
+        "ibnr_label": "IBNR Reserve (% Unreported Claims)",
+        "prevention_label": "Digital Health / Prevention Adoption (%)",
+        "expenses_header": "💸 Expense & Operating Loadings (% Premium)",
+        "commissions_label": "Commissions / Acquisition (CAC) (%)",
+        "admin_label": "Admin & Operations Expenses (%)",
+        "reinsurance_label": "Reinsurance / Capital Cost (%)",
+        "period_badge": "📅 Reporting Period: {mes} {anio}",
+        "kpi_premiums": "Premiums Earned (Month)",
+        "kpi_loss_ratio": "Incurred Loss Ratio (Claims/Premium)",
+        "kpi_loss_ratio_target": "Target <78%",
+        "kpi_combined_ratio": "Total Combined Ratio",
+        "kpi_surplus": "Surplus",
+        "kpi_deficit": "Deficit",
+        "kpi_net_result": "Net Technical Result (Month)",
+        "pnl_subheader": "📊 P&L Breakdown (Actuarial Income Statement)",
+        "pnl_concepts": ["Earned Premiums", "Paid Claims", "Outstanding Claims Reserve (RBNS)",
+                          "IBNR Reserve", "Operating & CAC Expenses", "Net Result"],
+        "pnl_concept_col": "Concept",
+        "pnl_amount_col": "Amount (€)",
+        "sens_subheader": "📈 Combined Ratio Sensitivity vs Preventive Adoption",
+        "sens_x_col": "Digital Health Adoption (%)",
+        "sens_y_col": "Combined Ratio (%)",
+        "sens_breakeven": "Breakeven (100%)",
+        "sens_target": "Alan Target (90%)",
+        "ratios_subheader": "📑 Actuarial & Financial Ratios Summary",
+        "ratios_col_ratio": "Actuarial Ratio",
+        "ratios_col_value": "Calculated Value",
+        "ratios_col_benchmark": "Benchmark / Alan Target",
+        "ratios_col_status": "Status",
+        "ratios_names": [
+            "Incurred Loss Ratio (Total Claims / Premiums)",
+            "Expense Ratio (Admin + Commissions / Premiums)",
+            "Combined Ratio (LR + ER)",
+            "Claims Automation Rate (Auto-claims)",
+        ],
+        "ratios_benchmarks": ["< 78.0%", "< 12.0%", "< 90.0%", "> 90.0%"],
+        "status_ok_range": "✅ On Target",
+        "status_review_rate": "⚠️ Review Pricing",
+        "status_efficient": "✅ Efficient",
+        "status_high_ga": "⚠️ High G&A",
+        "status_profitable": "🟢 Profitable",
+        "status_loss": "🔴 Loss-making",
+        "status_target_met": "🟢 Target Met",
+        "status_improve_adoption": "🟡 Improve Adoption",
+        "footer_name_role": "Pablo Guidi — Insurance Expert (Spanish Market)",
+        "footer_sub": "Pricing & Re-pricing Strategy • Portfolio Profitability & Margin Steering • Technical Leadership",
+        "footer_badge": "💜 Alan Health Insurance Framework",
+    },
+}
+ 
+# --- SELECTOR DE IDIOMA (primer widget que se crea, arriba del todo en el sidebar) ---
+with st.sidebar:
+    _idioma_sel = st.selectbox("🌐 Idioma / Language", ["Español", "English"], index=0)
+lang = "es" if _idioma_sel == "Español" else "en"
+T = TRANSLATIONS[lang]
+ 
 # --- AVISO DE REINICIO ÚNICO (solo la primera vez que se crea/actualiza el tema) ---
 if _TEMA_RECIEN_CREADO:
-    st.warning(
-        "⚙️ **Configuración de color aplicada.** Se ha creado/actualizado "
-        "`.streamlit/config.toml` con el azul de Alan (#5956E9). "
-        "Detén la app (Ctrl+C en la terminal) y vuelve a ejecutar "
-        "`streamlit run app_alan_health.py` **una sola vez** para que los "
-        "sliders, radios y demás controles se pinten en azul de forma nativa."
-    )
+    st.warning(T["restart_warning"])
     st.stop()
  
 # --- FUNCIÓN HELPER PARA CARGAR IMÁGENES LOCALES EN HTML ---
@@ -402,19 +589,18 @@ st.markdown(f"""
 <div class="custom-header">
     <div class="header-left">
         {logo_img_tag}
-        <h1 class="main-title-text">Reporting Mensual de Rentabilidad y Drivers Actuariales</h1>
+        <h1 class="main-title-text">{T["main_title"]}</h1>
     </div>
     <div class="personal-brand-header-badge">
         <div class="brand-avatar">PG</div>
         <div class="brand-info-text">
-            <span class="brand-title">INSURANCE EXPERT (SPAIN)</span>
+            <span class="brand-title">{T["brand_title_header"]}</span>
             <span class="brand-name">Pablo Guidi</span>
         </div>
     </div>
 </div>
 <p class="sub-description">
-Framework de reporting interno mensual diseñado bajo los principios de <b>transparencia radical</b> de Alan. 
-Permite monitorizar la cuenta de resultados técnica, la estrategia de <i>Pricing & Re-pricing</i> y la rentabilidad del portfolio.
+{T["sub_description"]}
 </p>
 """, unsafe_allow_html=True)
  
@@ -425,75 +611,71 @@ with st.sidebar:
     if mascot_b64:
         st.markdown(f'<img src="data:image/png;base64,{mascot_b64}" style="width: 160px; display: block; margin: 0 auto;">', unsafe_allow_html=True)
  
-    st.markdown("""
+    _focus_items_html = "".join(f"• {item}<br>" for item in T["sidebar_focus_items"])
+    st.markdown(f"""
     <div class="sidebar-brand-card">
         <div class="sidebar-brand-header">
             <div class="sidebar-avatar">PG</div>
             <div>
                 <div class="sidebar-brand-name">Pablo Guidi</div>
-                <div class="sidebar-brand-role">Insurance Expert • Spanish Market</div>
+                <div class="sidebar-brand-role">{T["sidebar_role"]}</div>
             </div>
         </div>
         <div style="font-size:0.81rem; color:#4B5563; line-height:1.45;">
-            <b>Enfoque técnico & negocio:</b><br>
-            • Pricing & Re-pricing Strategy<br>
-            • Margin Monitoring & Portfolio P&L<br>
-            • Risk Steering & Key Account Tools
+            <b>{T["sidebar_focus_title"]}</b><br>
+            {_focus_items_html}
         </div>
-        <div class="brand-status-pill">🇪🇸 Health Insurance & Actuarial Quantitative</div>
+        <div class="brand-status-pill">{T["sidebar_status_pill"]}</div>
     </div>
     """, unsafe_allow_html=True)
  
-    st.header("📅 Periodo de Reporting")
-    _meses_es = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-    import datetime as _dt
+    st.header(T["period_header"])
     _hoy = _dt.date.today()
     col_mes, col_anio = st.columns(2)
     with col_mes:
-        mes_seleccionado = st.selectbox("Mes", _meses_es, index=_hoy.month - 1)
+        mes_seleccionado = st.selectbox(T["month_label"], T["months"], index=_hoy.month - 1)
     with col_anio:
         anio_seleccionado = st.selectbox(
-            "Año",
+            T["year_label"],
             list(range(_hoy.year - 2, _hoy.year + 2)),
             index=2  # año actual por defecto
         )
  
-    st.header("🏢 Segmento de Cliente y Oferta")
-    segmento = st.radio("Tipo de Cliente", ["Empresas (B2B)", "Individuales / TNS (B2C)"])
+    st.header(T["segment_header"])
+    segmento = st.radio(T["client_type_label"], T["client_type_options"])
  
-    if segmento == "Empresas (B2B)":
-        plan = st.selectbox("Oferta B2B (Elegible Colectivos)", ["Essentiel", "Balanced", "Optimal"])
-        num_miembros = st.slider("Número de Asegurados en Colectivo", min_value=50, max_value=10000, value=1000, step=50)
-        edad_media = st.slider("Edad Media de la Plantilla (Ajuste Demográfico)", min_value=20, max_value=65, value=36)
-        
+    if segmento == T["client_type_options"][0]:  # B2B
+        plan = st.selectbox(T["b2b_offer_label"], ["Essentiel", "Balanced", "Optimal"])
+        num_miembros = st.slider(T["b2b_members_label"], min_value=50, max_value=10000, value=1000, step=50)
+        edad_media = st.slider(T["b2b_age_label"], min_value=20, max_value=65, value=36)
+ 
         prima_base = {"Essentiel": 38.0, "Balanced": 52.0, "Optimal": 75.0}[plan]
         factor_demog = 1.0 + max(0, (edad_media - 30) * 0.015)
         prima_mes = prima_base * factor_demog
-    else:
-        plan = st.selectbox("Oferta B2C (Trabajadores No Salariados / TNS)", ["Alan Rubis", "Alan Emeraude", "Alan Saphir"])
-        num_miembros = st.slider("Número de Asegurados Individuales", min_value=50, max_value=3000, value=500, step=25)
+    else:  # B2C
+        plan = st.selectbox(T["b2c_offer_label"], ["Alan Rubis", "Alan Emeraude", "Alan Saphir"])
+        num_miembros = st.slider(T["b2c_members_label"], min_value=50, max_value=3000, value=500, step=25)
         prima_mes = {"Alan Rubis": 42.0, "Alan Emeraude": 65.0, "Alan Saphir": 95.0}[plan]
         factor_demog = 1.0
  
-    st.header("📊 Drivers de Siniestralidad y Reservas")
-    frecuencia_reclamos = st.slider("Frecuencia (Reclamos / Miembro / Mes)", min_value=0.2, max_value=2.0, value=0.65, step=0.05)
-    costo_medio_reclamo = st.number_input("Costo Medio por Reclamo (€)", min_value=20.0, max_value=300.0, value=58.0, step=2.0)
+    st.header(T["claims_header"])
+    frecuencia_reclamos = st.slider(T["frequency_label"], min_value=0.2, max_value=2.0, value=0.65, step=0.05)
+    costo_medio_reclamo = st.number_input(T["avg_cost_label"], min_value=20.0, max_value=300.0, value=58.0, step=2.0)
  
-    rsp_pct = st.slider("Reserva de Siniestros Pendientes (RSP / RBNS) (%)", min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100.0
-    ibnr_pct = st.slider("Reserva IBNR (% Siniestros No Reportados)", min_value=1.0, max_value=10.0, value=4.5, step=0.5) / 100.0
-    adopcion_prevencion = st.slider("Adopción Salud Digital / Prevención (%)", min_value=10, max_value=100, value=55, step=5) / 100.0
+    rsp_pct = st.slider(T["rsp_label"], min_value=1.0, max_value=8.0, value=3.0, step=0.5) / 100.0
+    ibnr_pct = st.slider(T["ibnr_label"], min_value=1.0, max_value=10.0, value=4.5, step=0.5) / 100.0
+    adopcion_prevencion = st.slider(T["prevention_label"], min_value=10, max_value=100, value=55, step=5) / 100.0
  
-    st.header("💸 Cargas de Gastos y Operación (% Prima)")
-    comisiones_pct = st.slider("Comisiones / Adquisición (CAC) (%)", min_value=0.0, max_value=15.0, value=4.5, step=0.5) / 100.0
-    operaciones_admin_pct = st.slider("Gastos Admin & Operaciones Ops (%)", min_value=5.0, max_value=20.0, value=9.5, step=0.5) / 100.0
-    reaseguro_pct = st.slider("Costo de Reaseguro / Capital (%)", min_value=0.5, max_value=5.0, value=1.5, step=0.1) / 100.0
+    st.header(T["expenses_header"])
+    comisiones_pct = st.slider(T["commissions_label"], min_value=0.0, max_value=15.0, value=4.5, step=0.5) / 100.0
+    operaciones_admin_pct = st.slider(T["admin_label"], min_value=5.0, max_value=20.0, value=9.5, step=0.5) / 100.0
+    reaseguro_pct = st.slider(T["reinsurance_label"], min_value=0.5, max_value=5.0, value=1.5, step=0.1) / 100.0
  
 # --- CÁLCULOS ACTUARIALES ---
 ingresos_primas_mes = num_miembros * prima_mes
  
 siniestros_pagados_base = num_miembros * frecuencia_reclamos * costo_medio_reclamo
-reduccion_prevencion = adopcion_prevencion * 0.07 
+reduccion_prevencion = adopcion_prevencion * 0.07
 siniestros_pagados = siniestros_pagados_base * (1.0 - reduccion_prevencion)
  
 rsp_monto = siniestros_pagados * rsp_pct
@@ -518,16 +700,17 @@ st.markdown(f"""
 <div style="display:inline-flex; align-items:center; gap:8px; background:#EEF2FF;
             border:1px solid #C7D2FE; border-radius:20px; padding:5px 14px;
             margin-bottom:14px; font-size:0.85rem; font-weight:700; color:#4F46E5;">
-    📅 Periodo de Reporting: {mes_seleccionado} {anio_seleccionado}
+    {T["period_badge"].format(mes=mes_seleccionado, anio=anio_seleccionado)}
 </div>
 """, unsafe_allow_html=True)
  
 col1, col2, col3, col4 = st.columns(4)
  
-col1.metric("Primas Devengadas Mes", f"{ingresos_primas_mes:,.0f} €")
-col2.metric("Loss Ratio Incurrido (S/P)", f"{loss_ratio:.1%}", delta="Target <78%", delta_color="inverse")
-col3.metric("Combined Ratio Total", f"{combined_ratio:.1%}", delta=f"{'Superávit' if combined_ratio < 1 else 'Déficit'}", delta_color="inverse")
-col4.metric("Resultado Técnico Neto Mes", f"{resultado_tecnico_neto:,.0f} €")
+col1.metric(T["kpi_premiums"], f"{ingresos_primas_mes:,.0f} €")
+col2.metric(T["kpi_loss_ratio"], f"{loss_ratio:.1%}", delta=T["kpi_loss_ratio_target"], delta_color="inverse")
+col3.metric(T["kpi_combined_ratio"], f"{combined_ratio:.1%}",
+            delta=(T["kpi_surplus"] if combined_ratio < 1 else T["kpi_deficit"]), delta_color="inverse")
+col4.metric(T["kpi_net_result"], f"{resultado_tecnico_neto:,.0f} €")
  
 st.divider()
  
@@ -535,30 +718,30 @@ st.divider()
 col_left, col_right = st.columns(2)
  
 with col_left:
-    st.subheader("📊 Desglose de la Cuenta de Resultados (P&L Actuarial)")
-    conceptos = ["Primas Devengadas", "Siniestros Pagados", "Reserva Siniestros Pendientes (RSP)", "Reserva IBNR", "Gastos Operativos & CAC", "Resultado Neto"]
+    st.subheader(T["pnl_subheader"])
+    conceptos = T["pnl_concepts"]
     valores = [
-        ingresos_primas_mes, 
-        -siniestros_pagados, 
-        -rsp_monto, 
-        -ibnr_monto, 
-        -gastos_totales_monto, 
+        ingresos_primas_mes,
+        -siniestros_pagados,
+        -rsp_monto,
+        -ibnr_monto,
+        -gastos_totales_monto,
         resultado_tecnico_neto
     ]
-    df_pnl = pd.DataFrame({"Concepto": conceptos, "Monto (€)": valores})
-    
+    df_pnl = pd.DataFrame({T["pnl_concept_col"]: conceptos, T["pnl_amount_col"]: valores})
+ 
     colors_pnl = ['#5956E9', '#EF4444', '#F87171', '#FCA5A5', '#F87171', '#10B981' if resultado_tecnico_neto >= 0 else '#EF4444']
-    
+ 
     fig_pnl = px.bar(
-        df_pnl, 
-        x="Concepto", 
-        y="Monto (€)", 
-        color="Concepto",
+        df_pnl,
+        x=T["pnl_concept_col"],
+        y=T["pnl_amount_col"],
+        color=T["pnl_concept_col"],
         color_discrete_sequence=colors_pnl,
         text_auto=".0f"
     )
     fig_pnl.update_layout(
-        showlegend=False, 
+        showlegend=False,
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         xaxis_title="",
@@ -567,17 +750,17 @@ with col_left:
     st.plotly_chart(fig_pnl, use_container_width=True)
  
 with col_right:
-    st.subheader("📈 Sensibilidad Combined Ratio vs Adopción Preventiva")
+    st.subheader(T["sens_subheader"])
     adop_range = np.linspace(0.1, 1.0, 10)
     lr_range = [((siniestros_pagados_base * (1 - (a * 0.07))) * (1 + rsp_pct) * (1 + ibnr_pct)) / ingresos_primas_mes for a in adop_range]
     cr_range = [lr + expense_ratio for lr in lr_range]
-    
-    df_cr = pd.DataFrame({"Adopción Salud Digital (%)": adop_range * 100, "Combined Ratio (%)": np.array(cr_range) * 100})
-    fig_cr = px.line(df_cr, x="Adopción Salud Digital (%)", y="Combined Ratio (%)", markers=True, color_discrete_sequence=["#5956E9"])
-    
-    fig_cr.add_hline(y=100, line_dash="dash", line_color="#EF4444", annotation_text="Breakeven (100%)")
-    fig_cr.add_hline(y=90, line_dash="dash", line_color="#10B981", annotation_text="Target Alan (90%)")
-    
+ 
+    df_cr = pd.DataFrame({T["sens_x_col"]: adop_range * 100, T["sens_y_col"]: np.array(cr_range) * 100})
+    fig_cr = px.line(df_cr, x=T["sens_x_col"], y=T["sens_y_col"], markers=True, color_discrete_sequence=["#5956E9"])
+ 
+    fig_cr.add_hline(y=100, line_dash="dash", line_color="#EF4444", annotation_text=T["sens_breakeven"])
+    fig_cr.add_hline(y=90, line_dash="dash", line_color="#10B981", annotation_text=T["sens_target"])
+ 
     fig_cr.update_layout(
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
@@ -585,28 +768,30 @@ with col_right:
     st.plotly_chart(fig_cr, use_container_width=True)
  
 # --- TABLA DE RATIOS ACTUARIALES ---
-st.subheader("📑 Resumen de Ratios Actuariales y Financieros")
+st.subheader(T["ratios_subheader"])
 ratios_df = pd.DataFrame({
-    "Ratio Actuarial": ["Loss Ratio Incurrido (Siniestralidad Total / Primas)", "Expense Ratio (Gastos Admin + Comisiones / Primas)", "Combined Ratio (LR + ER)", "Tasa de Automatización de Siniestros (Auto-claims)"],
-    "Valor Calculado": [f"{loss_ratio:.2%}", f"{expense_ratio:.2%}", f"{combined_ratio:.2%}", f"{auto_claims_rate:.1%}"],
-    "Benchmark / Target Alan": ["< 78.0%", "< 12.0%", "< 90.0%", "> 90.0%"],
-    "Estado": ["✅ En Rango" if loss_ratio <= 0.78 else "⚠️ Revisar Tarifa", 
-               "✅ Eficiente" if expense_ratio <= 0.15 else "⚠️ Alto G&A",
-               "🟢 Rentable" if combined_ratio <= 1.0 else "🔴 En Pérdida",
-               "🟢 Objetivo Cumplido" if auto_claims_rate >= 0.9 else "🟡 Mejorar Adopción"]
+    T["ratios_col_ratio"]: T["ratios_names"],
+    T["ratios_col_value"]: [f"{loss_ratio:.2%}", f"{expense_ratio:.2%}", f"{combined_ratio:.2%}", f"{auto_claims_rate:.1%}"],
+    T["ratios_col_benchmark"]: T["ratios_benchmarks"],
+    T["ratios_col_status"]: [
+        T["status_ok_range"] if loss_ratio <= 0.78 else T["status_review_rate"],
+        T["status_efficient"] if expense_ratio <= 0.15 else T["status_high_ga"],
+        T["status_profitable"] if combined_ratio <= 1.0 else T["status_loss"],
+        T["status_target_met"] if auto_claims_rate >= 0.9 else T["status_improve_adoption"],
+    ]
 })
  
 st.dataframe(ratios_df, use_container_width=True, hide_index=True)
  
 # --- BANNER DE CIERRE ---
-st.markdown("""
+st.markdown(f"""
 <div class="footer-brand-box">
     <div>
-        <div class="footer-brand-title">Pablo Guidi — Insurance Expert (Spanish Market)</div>
-        <div class="footer-brand-sub">Pricing & Re-pricing Strategy • Portfolio Profitability & Margin Steering • Technical Leadership</div>
+        <div class="footer-brand-title">{T["footer_name_role"]}</div>
+        <div class="footer-brand-sub">{T["footer_sub"]}</div>
     </div>
     <div class="footer-badge">
-        💜 Alan Health Insurance Framework
+        {T["footer_badge"]}
     </div>
 </div>
 """, unsafe_allow_html=True)
